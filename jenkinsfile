@@ -1,0 +1,47 @@
+pipeline{
+
+    agent any
+    environment{
+        USERNAME=jaygigs
+        USER_PASS=credentials('password')
+        SERVICE=capstone
+        REPOSITORY_DETAILS=${USERNAME}/${SERVICE}:${BUILD_ID}  
+    }
+    stages{
+        //checkout from source control
+      stage('checkout code'){
+        steps{
+            checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_LOGIN', url: '']]])
+        }
+      }
+       //Build docker image
+      stage('Build Image and push to hub'){
+        steps{
+            script{
+                sh """
+                  docker build -t ${REPOSITORY_DETAILS} .
+                   
+                  docker login -u ${USERNAME} --password-stdin ${USER_PASS}
+
+                  docker push ${REPOSITORY_DETAILS}
+                
+                """
+            }
+        }
+      stage('Deploy to kubernetes cluster'){
+
+        steps{
+            script{
+
+                sh """
+
+                """
+            }
+        }
+      }
+
+
+      }
+    }
+
+}

@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: courage_capstone
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: courage_capstone
+   labels:
+      app: courage_capstone
+   namespace: courage_capstone
+spec:
+  replicas: 2
+  matchlabels:
+    app: courage_capstone
+  template:
+    metadata:
+      matchlabels:
+        app: courage_capstone
+    spec:
+        containers:
+          - image: scinet0786/devchefrontend:latest
+            name: courage_capstone
+            ports:
+              containerPort: 3000
+            
+
+---
+apiVersion: v1
+kind: service
+metadata:
+  name: courage_capstone
+  namesapce: courage_capstone
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+      app: courage_capstone
+    protocol: TCP
+  type: LoadBalancer
